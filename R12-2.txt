@@ -1,0 +1,7 @@
+/system/identity/set name=R12-2
+
+/tool/romon/set enabled=yes
+
+/ip/address/add address=10.2.3.2 netmask=255.255.255.0 interface=ether2
+
+/ip/address/add address=12.12.12.12 netmask=255.255.255.255 interface=lo

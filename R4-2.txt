@@ -1,0 +1,9 @@
+/system/identity/set name=R4-2
+
+/tool/romon/set enabled=yes
+
+/ip/address/add address=100.2.4.2 netmask=255.255.255.0 interface=ether2
+/ip/address/add address=20.2.3.1 netmask=255.255.255.0 interface=ether3
+/ip/address/add address=20.2.1.2 netmask=255.255.255.0 interface=ether4
+
+/ip/address/add address=4.4.4.4 netmask=255.255.255.255 interface=lo

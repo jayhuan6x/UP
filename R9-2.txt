@@ -1,0 +1,9 @@
+/system/identity/set name=R9-2
+
+/tool/romon/set enabled=yes
+
+/ip/address/add address=30.2.2.3 netmask=255.255.255.0 interface=ether2
+/ip/address/add address=30.2.3.1 netmask=255.255.255.0 interface=ether3
+/ip/dhcp-client/add interface=ether4
+
+/ip/address/add address=9.9.9.9 netmask=255.255.255.255 interface=lo
