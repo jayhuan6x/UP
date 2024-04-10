@@ -6,4 +6,11 @@
 /ip/address/add address=20.2.3.1 netmask=255.255.255.0 interface=ether3
 /ip/address/add address=20.2.1.2 netmask=255.255.255.0 interface=ether4
 
-/ip/address/add address=4.4.4.4 netmask=255.255.255.255 interface=lo
+/ip/address/add address=2.4.4.4 netmask=255.255.255.255 interface=lo
+
+/routing/isis/
+instance/add name=instance-1 system-id=0000.0000.0004 areas=02.0202
+interface-template/add levels=l1 instance=instance-1
+ interfaces=ether3,ether4,lo
+
+/routing/id/add name=loopback select-dynamic-id=only-loopback select-from-vrf=main
