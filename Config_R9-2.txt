@@ -1,0 +1,65 @@
+
+# 2024-04-11 11:27:56 by RouterOS 7.14.2
+# software id =
+#
+/interface ethernet
+set [ find default-name=ether1 ] name=ether2
+set [ find default-name=ether2 ] name=ether3
+set [ find default-name=ether3 ] name=ether4
+set [ find default-name=ether4 ] name=ether5
+set [ find default-name=ether5 ] name=ether6
+set [ find default-name=ether6 ] name=ether7
+set [ find default-name=ether7 ] name=ether8
+set [ find default-name=ether8 ] name=ether9
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/port
+set 0 name=serial0
+/routing id
+add name=loopback select-dynamic-id=only-loopback select-from-vrf=main
+/routing isis instance
+add areas=02.0302 name=instance-1 system-id=0000.0000.0009
+/ip firewall connection tracking
+set udp-timeout=10s
+/ipv6 settings
+set max-neighbor-entries=16384
+/ip address
+add address=30.2.2.3/24 interface=ether2 network=30.2.2.0
+add address=30.2.3.1/24 interface=ether3 network=30.2.3.0
+add address=2.9.9.9 interface=lo network=2.9.9.9
+/ip dhcp-client
+add interface=*1
+add interface=ether4
+/ip dns
+set allow-remote-requests=yes servers=8.8.8.8
+/ip firewall address-list
+add address=0.0.0.0/0 list=R9-2
+/ip firewall nat
+add action=masquerade chain=srcnat out-interface=ether4
+/routing bgp connection
+add address-families=ip as=302 disabled=no local.address=2.9.9.9 .role=\
+    ibgp-rr name=R7-2 nexthop-choice=force-self output.default-originate=\
+    always .network=R9-2 remote.address=2.7.7.7/32 .as=302 router-id=2.9.9.9 \
+    routing-table=main
+add address-families=ip as=302 disabled=no local.address=2.9.9.9 .role=\
+    ibgp-rr name=R10-2 nexthop-choice=force-self output.as-override=no \
+    .default-originate=always .network=R9-2 remote.address=2.10.10.10/32 .as=\
+    302 router-id=2.9.9.9
+add address-families=ip as=302 disabled=no local.address=2.9.9.9 .role=\
+    ibgp-rr name=R6-2 nexthop-choice=force-self output.default-originate=\
+    always .network=R9-2 remote.address=2.6.6.6/32 .as=302 router-id=2.9.9.9
+add address-families=ip as=302 disabled=no local.address=2.9.9.9 .role=\
+    ibgp-rr name=R5-2 nexthop-choice=force-self output.default-originate=\
+    always .network=R9-2 remote.address=2.5.5.5/32 .as=302 router-id=2.9.9.9 \
+    routing-table=main
+add address-families=ip as=302 disabled=no local.address=2.9.9.9 .role=\
+    ibgp-rr name=R8-2 nexthop-choice=force-self output.default-originate=\
+    always .network=R9-2 remote.address=2.8.8.8/32 .as=302 router-id=2.9.9.9
+/routing isis interface-template
+add instance=instance-1 interfaces=ether2,ether3,lo levels=l1
+/system identity
+set name=R9-2
+/system note
+set show-at-login=no
+/tool romon
+set enabled=yes
