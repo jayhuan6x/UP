@@ -1,4 +1,5 @@
-# 2024-04-11 11:24:13 by RouterOS 7.14.2
+
+# 2024-04-12 11:10:31 by RouterOS 7.14.2
 # software id =
 #
 /interface ethernet
@@ -34,18 +35,23 @@ add interface=*1
 set allow-remote-requests=yes servers=30.2.1.2
 /ip dns static
 add address=30.2.1.2 name=Internet
+/ip firewall address-list
+add address=100.2.1.0/24 list=R5-R1
+add address=100.2.15.0/24 list=R5-R1
 /ip route
-add disabled=no dst-address=2.1.1.1/32 gateway=100.2.15.1 routing-table=main \
-    suppress-hw-offload=no
-add disabled=yes distance=1 dst-address=2.1.1.1/32 gateway=100.2.1.1 \
-    pref-src="" routing-table=main scope=30 suppress-hw-offload=no \
+add comment=15.0 disabled=yes distance=1 dst-address=2.1.1.1/32 gateway=\
+    100.2.15.1 pref-src="" routing-table=main scope=30 suppress-hw-offload=no \
+    target-scope=10
+add comment=1.0 disabled=no distance=1 dst-address=2.1.1.1/32 gateway=\
+    100.2.1.1 pref-src="" routing-table=main scope=30 suppress-hw-offload=no \
     target-scope=10
 /routing bgp connection
 add address-families=ip as=302 disabled=no local.address=2.5.5.5 .role=\
-    ibgp-rr-client name=R9-2 output.redistribute=connected remote.address=\
-    2.9.9.9/32 .as=302 router-id=2.5.5.5 routing-table=main
+    ibgp-rr-client name=R9-2 output.network=R5-R1 .redistribute="" \
+    remote.address=2.9.9.9/32 .as=302 router-id=2.5.5.5 routing-table=main
 add address-families=ip as=302 disabled=no local.address=2.5.5.5 .role=ebgp \
-    name=R1-2 nexthop-choice=force-self remote.address=2.1.1.1/32 .as=102 \
+    multihop=yes name=R1-2 nexthop-choice=force-self \
+    output.default-originate=always remote.address=2.1.1.1/32 .as=102 \
     router-id=2.5.5.5 routing-table=main
 /routing isis interface-template
 add instance=instance-1 interfaces=ether4,lo levels=l1
@@ -53,5 +59,15 @@ add instance=instance-1 interfaces=ether4,lo levels=l1
 set name=R5-2
 /system note
 set show-at-login=no
+/tool netwatch
+add disabled=yes down-script="/ip/route/disable [find comment=\"15.0\"]" \
+    host=100.2.15.1 http-codes="" name=100.2.15.1 test-script="" type=simple \
+    up-script="/ip/route/enable [find comment=\"15.0\"]"
+add disabled=no down-script="/ip/route/disable [find comment=\"1.0\"]\r\
+    \n/ip/route/enable [find comment=\"15.0\"]" host=100.2.1.1 http-codes="" \
+    name=100.2.1.1 src-address=100.2.1.2 test-script="" type=icmp up-script="/\
+    ip/route/disable [find comment=\"15.0\"]\r\
+    \n/ip/route/enable [find comment=\"1.0\"]\r\
+    \n"
 /tool romon
 set enabled=yes

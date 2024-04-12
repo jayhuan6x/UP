@@ -1,4 +1,5 @@
-# 2024-04-11 11:27:05 by RouterOS 7.14.2
+
+# 2024-04-12 11:12:16 by RouterOS 7.14.2
 # software id =
 #
 /interface ethernet
@@ -32,13 +33,19 @@ add interface=*1
 set allow-remote-requests=yes servers=30.2.4.1
 /ip dns static
 add address=30.2.4.1 name=Internet
+/ip firewall address-list
+add address=100.2.4.0/24 list=R8-R4
+/ip route
+add disabled=no dst-address=2.4.4.4/32 gateway=100.2.4.2 routing-table=main \
+    suppress-hw-offload=no
 /routing bgp connection
-add address-families=ip as=302 disabled=no local.address=100.2.4.1 .role=ebgp \
-    name=R4-2 nexthop-choice=force-self output.default-originate=always \
-    remote.address=100.2.4.2/32 .as=202 router-id=2.8.8.8 routing-table=main
+add address-families=ip as=302 disabled=no local.address=2.8.8.8 .role=ebgp \
+    multihop=yes name=R4-2 nexthop-choice=force-self \
+    output.default-originate=always remote.address=2.4.4.4/32 .as=202 \
+    router-id=2.8.8.8 routing-table=main
 add address-families=ip as=302 disabled=no local.address=2.8.8.8 .role=\
-    ibgp-rr-client name=R9-2 nexthop-choice=force-self output.redistribute=\
-    connected remote.address=2.9.9.9/32 .as=302 router-id=2.8.8.8 \
+    ibgp-rr-client name=R9-2 nexthop-choice=force-self output.network=R8-R4 \
+    .redistribute="" remote.address=2.9.9.9/32 .as=302 router-id=2.8.8.8 \
     routing-table=main
 /routing isis interface-template
 add instance=instance-1 interfaces=ether2,lo levels=l1

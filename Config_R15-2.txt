@@ -1,0 +1,29 @@
+# 2024-04-12 11:16:24 by RouterOS 7.14.2
+# software id =
+#
+/interface vrrp
+add authentication=ah interface=ether2 name=vrrp1 preemption-mode=no version=\
+    2
+/ip pool
+add name=dhcp_pool0 ranges=10.2.1.4-10.2.1.254
+/ip dhcp-server
+add address-pool=dhcp_pool0 interface=vrrp1 name=dhcp1
+/port
+set 0 name=serial0
+/ip address
+add address=10.2.1.1/24 interface=vrrp1 network=10.2.1.0
+add address=10.2.1.2/24 interface=ether2 network=10.2.1.0
+/ip dhcp-client
+add interface=ether1
+/ip dhcp-server network
+add address=10.2.1.0/24 dns-server=10.2.1.1 gateway=10.2.1.1
+/ip dns static
+add address=200.2.1.1 name=Internet
+/ip firewall nat
+add action=masquerade chain=srcnat out-interface=ether1
+/system identity
+set name=R15-2
+/system note
+set show-at-login=no
+/tool romon
+set enabled=yes

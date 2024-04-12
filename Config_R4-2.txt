@@ -1,4 +1,4 @@
-# 2024-04-11 11:22:33 by RouterOS 7.14.2
+# 2024-04-12 11:09:44 by RouterOS 7.14.2
 # software id =
 #
 /interface ethernet
@@ -29,12 +29,21 @@ add address=20.2.1.2/24 interface=ether4 network=20.2.1.0
 add address=2.4.4.4 interface=lo network=2.4.4.4
 /ip dhcp-client
 add interface=*1
+/ip dns
+set allow-remote-requests=yes servers=100.2.4.1
+/ip dns static
+add address=100.2.4.1 name=Internet
 /ip firewall nat
-add action=masquerade chain=srcnat out-interface=ether2
+add action=masquerade chain=srcnat out-interface=ether2 src-address=\
+    2.14.14.14
+add action=masquerade chain=srcnat out-interface=ether2 src-address=20.2.3.2
+/ip route
+add disabled=no dst-address=2.8.8.8/32 gateway=100.2.4.1 routing-table=main \
+    suppress-hw-offload=no
 /routing bgp connection
-add address-families=ip as=202 disabled=no local.address=100.2.4.2 .role=ebgp \
-    name=R8-2 nexthop-choice=force-self remote.address=100.2.4.1/32 .as=302 \
-    router-id=2.4.4.4 routing-table=main
+add address-families=ip as=202 disabled=no local.address=2.4.4.4 .role=ebgp \
+    multihop=yes name=R8-2 nexthop-choice=force-self remote.address=\
+    2.8.8.8/32 .as=302 router-id=2.4.4.4 routing-table=main
 add address-families=ip as=202 disabled=no local.address=2.4.4.4 .role=ibgp \
     name=R3-2 nexthop-choice=force-self remote.address=2.3.3.3/32 .as=202 \
     router-id=2.4.4.4 routing-table=main

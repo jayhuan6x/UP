@@ -1,4 +1,4 @@
-# 2024-04-11 11:26:26 by RouterOS 7.14.2
+# 2024-04-12 11:11:53 by RouterOS 7.14.2
 # software id =
 #
 /interface ethernet
@@ -34,14 +34,21 @@ set allow-remote-requests=yes servers=30.2.3.1
 /ip dns static
 add address=30.2.3.1 name=Internet
 /ip firewall address-list
-add address=0.0.0.0/0 list=R9-2
+add address=100.2.3.0/24 list=R7-R3
 /ip route
 add disabled=no dst-address=100.2.4.0/24 gateway=30.2.4.2 routing-table=main \
     suppress-hw-offload=no
+add disabled=no dst-address=2.3.3.3/32 gateway=100.2.3.2 routing-table=main \
+    suppress-hw-offload=no
 /routing bgp connection
 add address-families=ip as=302 disabled=no local.address=2.7.7.7 .role=\
-    ibgp-rr-client name=R9-2 nexthop-choice=force-self remote.address=\
-    2.9.9.9/32 .as=302 router-id=2.7.7.7 routing-table=main
+    ibgp-rr-client name=R9-2 nexthop-choice=force-self output.network=R7-R3 \
+    .redistribute="" remote.address=2.9.9.9/32 .as=302 router-id=2.7.7.7 \
+    routing-table=main
+add address-families=ip as=302 disabled=no local.address=2.7.7.7 .role=ebgp \
+    multihop=yes name=R3-2 nexthop-choice=force-self \
+    output.default-originate=always remote.address=2.3.3.3/32 .as=202 \
+    router-id=2.7.7.7
 /routing isis interface-template
 add instance=instance-1 interfaces=ether2,ether3,lo levels=l1
 /system identity
