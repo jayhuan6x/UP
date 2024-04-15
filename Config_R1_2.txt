@@ -1,4 +1,4 @@
-# 2024-04-12 11:07:57 by RouterOS 7.14.2
+# 2024-04-15 11:55:33 by RouterOS 7.14.2
 # software id =
 #
 /interface ethernet
@@ -16,8 +16,10 @@ set [ find default=yes ] supplicant-identity=MikroTik
 set 0 name=serial0
 /routing id
 add name=loopback select-dynamic-id=only-loopback select-from-vrf=main
-/routing isis instance
-add areas=02.0102 name=instance-1 system-id=0000.0000.0001
+/routing ospf instance
+add disabled=no name=ospf-instance-1 router-id=loopback
+/routing ospf area
+add disabled=no instance=ospf-instance-1 name=ospf-area-1
 /ip firewall connection tracking
 set udp-timeout=10s
 /ipv6 settings
@@ -37,8 +39,8 @@ set allow-remote-requests=yes servers=100.2.15.2,100.2.1.2
 add address=100.2.15.2 name=Internet
 add address=100.2.1.2 name=Internet_2
 /ip firewall nat
-add action=masquerade chain=srcnat out-interface=ether2
-add action=masquerade chain=srcnat out-interface=ether3
+add action=masquerade chain=srcnat out-interface=ether2 src-address=10.2.2.2
+add action=masquerade chain=srcnat out-interface=ether3 src-address=10.2.2.2
 /ip route
 add comment=15.0 disabled=yes distance=1 dst-address=2.5.5.5/32 gateway=\
     100.2.15.2 pref-src="" routing-table=main scope=30 suppress-hw-offload=no \
@@ -60,7 +62,11 @@ add address-families=ip as=102 disabled=no local.address=2.1.1.1 .role=ibgp \
     name=R12-2 nexthop-choice=force-self remote.address=2.12.12.12/32 .as=102 \
     router-id=2.1.1.1
 /routing isis interface-template
-add instance=instance-1 interfaces=ether4,ether5,lo levels=l1
+add instance=*2 interfaces=ether4,ether5,lo levels=l1
+/routing ospf interface-template
+add area=ospf-area-1 disabled=no interfaces=ether4
+add area=ospf-area-1 disabled=no interfaces=ether5
+add area=ospf-area-1 disabled=no interfaces=lo
 /system identity
 set name=R1-2
 /system note

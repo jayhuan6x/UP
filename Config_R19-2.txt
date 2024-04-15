@@ -1,0 +1,43 @@
+# 2024-04-15 12:07:48 by RouterOS 7.14.2
+# software id =
+#
+/disk
+set slot1 slot=slot1
+set slot2 slot=slot2
+set slot3 slot=slot3
+/interface vlan
+add interface=ether2 name=vlan101 vlan-id=101
+add interface=ether2 name=vlan102 vlan-id=102
+/interface vrrp
+add authentication=ah interface=vlan101 name=vrrp101 priority=150 version=2
+add authentication=ah interface=vlan102 name=vrrp102 priority=150 version=2
+/ip pool
+add name=dhcp_pool0 ranges=10.2.3.5-10.2.3.254
+add name=dhcp_pool1 ranges=10.2.5.5-10.2.5.254
+/ip dhcp-server
+add address-pool=dhcp_pool0 interface=vrrp101 name=dhcp1
+add address-pool=dhcp_pool1 interface=vrrp102 name=dhcp2
+/port
+set 0 name=serial0
+/routing id
+add disabled=no name=loopback select-dynamic-id=only-loopback \
+    select-from-vrf=main
+/ip address
+add address=2.19.19.19 interface=lo network=2.19.19.19
+add address=10.2.3.3/24 interface=vlan101 network=10.2.3.0
+add address=10.2.5.3/24 interface=vlan102 network=10.2.5.0
+add address=10.2.3.1/24 interface=vrrp101 network=10.2.3.0
+add address=10.2.5.1/24 interface=vrrp102 network=10.2.5.0
+/ip dhcp-client
+add interface=ether1
+/ip dhcp-server network
+add address=10.2.3.0/24 dns-server=10.2.3.1 gateway=10.2.3.1
+add address=10.2.5.0/24 dns-server=10.2.5.1 gateway=10.2.5.1
+/ip dns
+set allow-remote-requests=yes
+/system identity
+set name=R19-2
+/system note
+set show-at-login=no
+/tool romon
+set enabled=yes

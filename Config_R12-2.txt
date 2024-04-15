@@ -1,4 +1,4 @@
-# 2024-04-12 11:14:46 by RouterOS 7.14.2
+# 2024-04-15 12:04:02 by RouterOS 7.14.2
 # software id =
 #
 /interface ethernet
@@ -16,8 +16,10 @@ set [ find default=yes ] supplicant-identity=MikroTik
 set 0 name=serial0
 /routing id
 add name=loopback select-dynamic-id=only-loopback select-from-vrf=main
-/routing isis instance
-add areas=02.0102 name=instance-1 system-id=0000.0000.0012
+/routing ospf instance
+add disabled=no name=ospf-instance-1 router-id=loopback
+/routing ospf area
+add disabled=no instance=ospf-instance-1 name=ospf-area-1
 /ip firewall connection tracking
 set udp-timeout=10s
 /ipv6 settings
@@ -39,7 +41,10 @@ add address-families=ip as=102 disabled=no local.address=2.12.12.12 .role=\
 add address-families=ip as=102 disabled=no local.address=2.12.12.12 .role=\
     ibgp name=R11-2 remote.address=2.11.11.11/32 .as=102 router-id=2.12.12.12
 /routing isis interface-template
-add instance=instance-1 interfaces=ether2,lo levels=l1
+add instance=*1 interfaces=ether2,lo levels=l1
+/routing ospf interface-template
+add area=ospf-area-1 disabled=no interfaces=ether2
+add area=ospf-area-1 disabled=no interfaces=lo
 /system identity
 set name=R12-2
 /system note

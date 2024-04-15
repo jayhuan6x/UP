@@ -1,5 +1,5 @@
 
-# 2024-04-12 11:10:31 by RouterOS 7.14.2
+# 2024-04-15 11:58:48 by RouterOS 7.14.2
 # software id =
 #
 /interface ethernet
@@ -47,8 +47,9 @@ add comment=1.0 disabled=no distance=1 dst-address=2.1.1.1/32 gateway=\
     target-scope=10
 /routing bgp connection
 add address-families=ip as=302 disabled=no local.address=2.5.5.5 .role=\
-    ibgp-rr-client name=R9-2 output.network=R5-R1 .redistribute="" \
-    remote.address=2.9.9.9/32 .as=302 router-id=2.5.5.5 routing-table=main
+    ibgp-rr-client name=R9-2 nexthop-choice=force-self output.network=R5-R1 \
+    .redistribute="" remote.address=2.9.9.9/32 .as=302 router-id=2.5.5.5 \
+    routing-table=main
 add address-families=ip as=302 disabled=no local.address=2.5.5.5 .role=ebgp \
     multihop=yes name=R1-2 nexthop-choice=force-self \
     output.default-originate=always remote.address=2.1.1.1/32 .as=102 \
