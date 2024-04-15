@@ -1,10 +1,12 @@
-# 2024-04-15 12:07:48 by RouterOS 7.14.2
+# 2024-04-15 15:01:43 by RouterOS 7.14.2
 # software id =
 #
 /disk
 set slot1 slot=slot1
 set slot2 slot=slot2
 set slot3 slot=slot3
+set slot4 slot=slot4
+set slot5 slot=slot5
 /interface vlan
 add interface=ether2 name=vlan101 vlan-id=101
 add interface=ether2 name=vlan102 vlan-id=102

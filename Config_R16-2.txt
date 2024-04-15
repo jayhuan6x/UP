@@ -1,5 +1,4 @@
-
-# 2024-04-15 12:06:52 by RouterOS 7.14.2
+# 2024-04-15 15:00:41 by RouterOS 7.14.2
 # software id =
 #
 /disk
@@ -9,8 +8,11 @@ set slot3 slot=slot3
 set slot4 slot=slot4
 set slot5 slot=slot5
 set slot6 slot=slot6
+set slot7 slot=slot7
+set slot8 slot=slot8
 /interface gre
 add name=GRE_to_R17 remote-address=200.2.3.254
+add name=GRE_to_R18 remote-address=200.2.4.254
 /interface vlan
 add interface=ether2 name=vlan301 vlan-id=301
 add interface=ether2 name=vlan302 vlan-id=302
@@ -35,6 +37,7 @@ add address=10.2.1.1/24 interface=vrrp301 network=10.2.1.0
 add address=10.2.6.1/24 interface=vrrp302 network=10.2.6.0
 add address=10.2.6.3/24 interface=vlan302 network=10.2.6.0
 add address=176.2.176.16/24 interface=GRE_to_R17 network=176.2.176.0
+add address=186.2.186.16/24 interface=GRE_to_R18 network=186.2.186.0
 /ip dhcp-client
 add interface=ether1
 /ip dhcp-server network

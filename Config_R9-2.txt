@@ -1,4 +1,5 @@
-# 2024-04-15 12:02:20 by RouterOS 7.14.2
+
+# 2024-04-15 14:58:06 by RouterOS 7.14.2
 # software id =
 #
 /interface ethernet
@@ -15,8 +16,10 @@ set [ find default=yes ] supplicant-identity=MikroTik
 /ip pool
 add name=dhcp_pool0 ranges=200.2.1.2-200.2.1.254
 add name=dhcp_pool1 ranges=200.2.2.2-200.2.2.254
+add name=dhcp_pool2 ranges=200.2.5.2-200.2.5.254
 /ip dhcp-server
 add address-pool=dhcp_pool0 interface=ether5 name=dhcp1
+add address-pool=dhcp_pool2 interface=ether6 name=dhcp2
 /port
 set 0 name=serial0
 /routing id
@@ -32,15 +35,19 @@ add address=30.2.2.3/24 interface=ether2 network=30.2.2.0
 add address=30.2.3.1/24 interface=ether3 network=30.2.3.0
 add address=2.9.9.9 interface=lo network=2.9.9.9
 add address=200.2.1.1/24 interface=ether5 network=200.2.1.0
+add address=200.2.5.1/24 interface=ether6 network=200.2.5.0
 /ip dhcp-client
 add interface=*1
 add interface=ether4
 /ip dhcp-server lease
 add address=200.2.1.254 client-id=1:c:67:c0:eb:a7:0 mac-address=\
     0C:67:C0:EB:A7:00 server=dhcp1
+add address=200.2.5.254 client-id=1:c:53:9a:2b:5c:0 mac-address=\
+    0C:53:9A:2B:5C:00 server=dhcp2
 /ip dhcp-server network
 add address=200.2.1.0/24 dns-server=200.2.1.1 gateway=200.2.1.1
 add address=200.2.2.0/24 dns-server=200.2.2.1 gateway=200.2.2.1
+add address=200.2.5.0/24 dns-server=200.2.5.1 gateway=200.2.5.1
 /ip dns
 set allow-remote-requests=yes
 /ip firewall address-list

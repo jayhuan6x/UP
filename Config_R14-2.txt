@@ -1,5 +1,4 @@
-
-# 2024-04-15 12:04:49 by RouterOS 7.14.2
+# 2024-04-15 14:59:55 by RouterOS 7.14.2
 # software id =
 #
 /interface ethernet
@@ -50,6 +49,7 @@ set allow-remote-requests=yes servers=20.2.3.1
 add address=20.2.3.1 name=Internet
 /ip firewall address-list
 add address=200.2.2.0/24 list=R14-R16
+add address=200.2.4.0/24 list=R14-R16
 /routing bgp connection
 add address-families=ip as=202 disabled=no local.address=2.14.14.14 .role=\
     ibgp name=R4-2 nexthop-choice=force-self output.network=R14-R16 \
@@ -60,9 +60,9 @@ add address-families=ip as=202 disabled=no local.address=2.14.14.14 .role=\
     .redistribute="" remote.address=2.3.3.3/32 .as=202 router-id=2.14.14.14 \
     routing-table=main
 add address-families=ip as=202 disabled=no local.address=2.14.14.14 .role=\
-    ibgp name=R13-2 nexthop-choice=force-self output.network=R14-R16 \
-    .redistribute="" remote.address=2.13.13.13/32 .as=202 router-id=\
-    2.14.14.14 routing-table=main
+    ibgp name=R13-2 nexthop-choice=force-self output.redistribute="" \
+    remote.address=2.13.13.13/32 .as=202 router-id=2.14.14.14 routing-table=\
+    main
 /routing isis interface-template
 add instance=instance-1 interfaces=ether2,lo levels=l1
 /system identity
