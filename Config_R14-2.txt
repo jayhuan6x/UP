@@ -1,4 +1,4 @@
-# 2024-04-15 14:59:55 by RouterOS 7.14.2
+# 2024-04-17 11:25:22 by RouterOS 7.14.2
 # software id =
 #
 /interface ethernet
@@ -41,26 +41,23 @@ add address=200.2.2.254 client-id=1:c:67:c0:45:3f:0 mac-address=\
 add address=200.2.4.254 client-id=1:c:53:9a:c0:b6:0 mac-address=\
     0C:53:9A:C0:B6:00 server=dhcp2
 /ip dhcp-server network
-add address=200.2.2.0/24 dns-server=200.2.2.1 gateway=200.2.2.1
+add address=200.2.2.0/24 gateway=200.2.2.1
 add address=200.2.4.0/24
-/ip dns
-set allow-remote-requests=yes servers=20.2.3.1
-/ip dns static
-add address=20.2.3.1 name=Internet
 /ip firewall address-list
 add address=200.2.2.0/24 list=R14-R16
 add address=200.2.4.0/24 list=R14-R16
+/ip route
+add disabled=no distance=1 dst-address=0.0.0.0/0 gateway=20.2.3.1 pref-src="" \
+    routing-table=main scope=30 suppress-hw-offload=no target-scope=10
 /routing bgp connection
 add address-families=ip as=202 disabled=no local.address=2.14.14.14 .role=\
     ibgp name=R4-2 nexthop-choice=force-self output.network=R14-R16 \
-    .redistribute="" remote.address=2.4.4.4/32 .as=202 router-id=2.14.14.14 \
-    routing-table=main
+    remote.address=2.4.4.4/32 .as=202 router-id=2.14.14.14 routing-table=main
 add address-families=ip as=202 disabled=no local.address=2.14.14.14 .role=\
     ibgp name=R3-2 nexthop-choice=force-self output.network=R14-R16 \
-    .redistribute="" remote.address=2.3.3.3/32 .as=202 router-id=2.14.14.14 \
-    routing-table=main
+    remote.address=2.3.3.3/32 .as=202 router-id=2.14.14.14 routing-table=main
 add address-families=ip as=202 disabled=no local.address=2.14.14.14 .role=\
-    ibgp name=R13-2 nexthop-choice=force-self output.redistribute="" \
+    ibgp name=R13-2 nexthop-choice=force-self output.network=R14-R16 \
     remote.address=2.13.13.13/32 .as=202 router-id=2.14.14.14 routing-table=\
     main
 /routing isis interface-template

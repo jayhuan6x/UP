@@ -1,4 +1,4 @@
-# 2024-04-15 14:55:59 by RouterOS 7.14.2
+# 2024-04-17 11:19:58 by RouterOS 7.14.2
 # software id =
 #
 /interface ethernet
@@ -29,27 +29,19 @@ add address=20.2.2.1/24 interface=ether3 network=20.2.2.0
 add address=2.3.3.3 interface=lo network=2.3.3.3
 /ip dhcp-client
 add interface=*1
-/ip dns
-set allow-remote-requests=yes servers=100.2.3.1
-/ip dns static
-add address=100.2.3.1 name=Internet
-/ip firewall nat
-add action=masquerade chain=srcnat out-interface=ether2 src-address=\
-    2.13.13.13
-add action=masquerade chain=srcnat out-interface=ether2 src-address=20.2.2.2
 /ip route
 add disabled=no dst-address=2.7.7.7/32 gateway=100.2.3.1 routing-table=main \
     suppress-hw-offload=no
 /routing bgp connection
 add address-families=ip as=202 disabled=no local.address=2.3.3.3 .role=ebgp \
-    multihop=yes name=R7-2 nexthop-choice=force-self remote.address=\
-    2.7.7.7/32 .as=302 router-id=2.3.3.3 routing-table=main
+    multihop=yes name=R7-2 remote.address=2.7.7.7/32 .as=302 router-id=\
+    2.3.3.3 routing-table=main
 add address-families=ip as=202 disabled=no local.address=2.3.3.3 .role=ibgp \
     name=R4-2 nexthop-choice=force-self remote.address=2.4.4.4/32 .as=202 \
     router-id=2.3.3.3 routing-table=main
 add address-families=ip as=202 disabled=no local.address=2.3.3.3 .role=ibgp \
-    name=R13-2 nexthop-choice=force-self output.default-originate=always \
-    remote.address=2.13.13.13/32 .as=202 router-id=2.3.3.3
+    name=R13-2 nexthop-choice=force-self remote.address=2.13.13.13/32 .as=202 \
+    router-id=2.3.3.3 routing-table=main
 add address-families=ip as=202 disabled=no local.address=2.3.3.3 .role=ibgp \
     name=R14-2 nexthop-choice=force-self remote.address=2.14.14.14/32 .as=202 \
     router-id=2.3.3.3 routing-table=main

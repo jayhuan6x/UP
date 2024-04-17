@@ -1,16 +1,9 @@
-
-# 2024-04-15 14:54:28 by RouterOS 7.14.2
+# 2024-04-17 11:18:44 by RouterOS 7.14.2
 # software id =
 #
 /interface ethernet
-set [ find default-name=ether1 ] comment=15.0 name=ether2
-set [ find default-name=ether2 ] comment=1.0 name=ether3
-set [ find default-name=ether3 ] name=ether4
-set [ find default-name=ether4 ] name=ether5
-set [ find default-name=ether5 ] name=ether6
-set [ find default-name=ether6 ] name=ether7
-set [ find default-name=ether7 ] name=ether8
-set [ find default-name=ether8 ] name=ether9
+set [ find default-name=ether1 ] name=ether2
+set [ find default-name=ether2 ] name=ether3
 /interface wireless security-profiles
 set [ find default=yes ] supplicant-identity=MikroTik
 /port
@@ -26,22 +19,13 @@ set udp-timeout=10s
 /ipv6 settings
 set max-neighbor-entries=16384
 /ip address
-add address=100.2.15.1/24 comment=AD_R1_15.0 interface=ether2 network=\
-    100.2.15.0
-add address=100.2.1.1/24 comment=AD_R1_1.0 interface=ether3 network=100.2.1.0
-add address=10.2.1.1/24 interface=ether4 network=10.2.1.0
-add address=10.2.2.1/24 interface=ether5 network=10.2.2.0
+add address=100.2.15.1/24 interface=ether2 network=100.2.15.0
+add address=100.2.1.1/24 interface=ether3 network=100.2.1.0
+add address=10.2.1.1/24 interface=*4 network=10.2.1.0
+add address=10.2.2.1/24 interface=*5 network=10.2.2.0
 add address=2.1.1.1 interface=lo network=2.1.1.1
 /ip dhcp-client
 add interface=*1
-/ip dns
-set allow-remote-requests=yes servers=100.2.15.2,100.2.1.2
-/ip dns static
-add address=100.2.15.2 name=Internet
-add address=100.2.1.2 name=Internet_2
-/ip firewall nat
-add action=masquerade chain=srcnat out-interface=ether2 src-address=10.2.2.2
-add action=masquerade chain=srcnat out-interface=ether3 src-address=10.2.2.2
 /ip route
 add comment=15.0 disabled=yes distance=1 dst-address=2.5.5.5/32 gateway=\
     100.2.15.2 pref-src="" routing-table=main scope=30 suppress-hw-offload=no \
@@ -51,22 +35,22 @@ add comment=1.0 disabled=no distance=1 dst-address=2.5.5.5/32 gateway=\
     target-scope=10
 /routing bgp connection
 add address-families=ip as=102 disabled=no local.address=2.1.1.1 .role=ebgp \
-    multihop=yes name=R5-2 nexthop-choice=force-self remote.address=\
-    2.5.5.5/32 .as=302 router-id=2.1.1.1 routing-table=main
+    multihop=yes name=R5-2 remote.address=2.5.5.5/32 .as=302 router-id=\
+    2.1.1.1 routing-table=main
 add address-families=ip as=102 disabled=no local.address=2.1.1.1 .role=ibgp \
     name=R2-2 nexthop-choice=force-self remote.address=2.2.2.2/32 .as=102 \
-    router-id=2.1.1.1
+    router-id=2.1.1.1 routing-table=main
 add address-families=ip as=102 disabled=no local.address=2.1.1.1 .role=ibgp \
-    name=R11-2 nexthop-choice=force-self output.default-originate=always \
-    remote.address=2.11.11.11/32 .as=102 router-id=2.1.1.1
+    name=R11-2 nexthop-choice=force-self remote.address=2.11.11.11/32 .as=102 \
+    router-id=2.1.1.1 routing-table=main
 add address-families=ip as=102 disabled=no local.address=2.1.1.1 .role=ibgp \
     name=R12-2 nexthop-choice=force-self remote.address=2.12.12.12/32 .as=102 \
     router-id=2.1.1.1
 /routing isis interface-template
-add instance=*2 interfaces=ether4,ether5,lo levels=l1
+add instance=*2 interfaces=*4,*5,lo levels=l1
 /routing ospf interface-template
-add area=ospf-area-1 disabled=no interfaces=ether4
-add area=ospf-area-1 disabled=no interfaces=ether5
+add area=ospf-area-1 disabled=no interfaces=*4
+add area=ospf-area-1 disabled=no interfaces=*5
 add area=ospf-area-1 disabled=no interfaces=lo
 /system identity
 set name=R1-2
@@ -77,6 +61,7 @@ add disabled=yes down-script="/ip/route/disable [find comment=\"15.0\"]" \
     host=100.2.15.2 http-codes="" name=100.2.15.2 test-script="" type=simple \
     up-script="/ip/route/enable [find comment=\"15.0\"]\r\
     \n/ip/route/disable [find comment=\"1.0\"]"
+# Warning: probe waiting startup-delay=5m; 3m51s remaining
 add disabled=no down-script="/ip/route/disable [find comment=\"1.0\"]\r\
     \n/ip/route/enable [find comment=\"15.0\"]" host=100.2.1.2 http-codes="" \
     name=100.2.1.2 src-address=100.2.1.1 test-script="" type=icmp up-script="/\

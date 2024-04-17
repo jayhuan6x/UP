@@ -1,5 +1,4 @@
-
-# 2024-04-15 14:57:09 by RouterOS 7.14.2
+# 2024-04-17 11:21:13 by RouterOS 7.14.2
 # software id =
 #
 /interface ethernet
@@ -30,23 +29,16 @@ add address=2.6.6.6 interface=lo network=2.6.6.6
 add address=100.2.2.2/24 interface=ether4 network=100.2.2.0
 /ip dhcp-client
 add interface=*1
-/ip dns
-set allow-remote-requests=yes servers=30.2.2.3
-/ip dns static
-add address=30.2.2.3 name=Internet
-/ip firewall address-list
-add address=100.2.2.0/24 list=R6-R2
 /ip route
 add disabled=no dst-address=2.2.2.2/32 gateway=100.2.2.1 routing-table=main \
     suppress-hw-offload=no
 /routing bgp connection
 add address-families=ip as=302 disabled=no local.address=2.6.6.6 .role=\
-    ibgp-rr-client name=R9-2 output.network=R6-R2 .redistribute="" \
-    remote.address=2.9.9.9/32 .as=302 router-id=2.6.6.6 routing-table=main
+    ibgp-rr-client name=R9-2 nexthop-choice=force-self remote.address=\
+    2.9.9.9/32 .as=302 router-id=2.6.6.6 routing-table=main
 add address-families=ip as=302 disabled=no local.address=2.6.6.6 .role=ebgp \
-    multihop=yes name=R2-2 nexthop-choice=force-self \
-    output.default-originate=always remote.address=2.2.2.2/32 .as=102 \
-    router-id=2.6.6.6
+    multihop=yes name=R2-2 remote.address=2.2.2.2/32 .as=102 router-id=\
+    2.6.6.6 routing-table=main
 /routing isis interface-template
 add instance=instance-1 interfaces=ether2,lo levels=l1
 add instance=instance-1 interfaces=ether2,ether3,lo levels=l1

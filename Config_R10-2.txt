@@ -1,5 +1,4 @@
-
-# 2024-04-15 14:58:35 by RouterOS 7.14.2
+# 2024-04-17 11:23:45 by RouterOS 7.14.2
 # software id =
 #
 /interface ethernet
@@ -28,10 +27,6 @@ add address=30.2.2.2/24 interface=ether2 network=30.2.2.0
 add address=2.10.10.10 interface=lo network=2.10.10.10
 /ip dhcp-client
 add interface=*1
-/ip dns
-set allow-remote-requests=yes servers=30.2.2.3
-/ip dns static
-add address=30.2.2.3 name=Internet
 /routing bgp connection
 add address-families=ip as=302 disabled=no local.address=2.10.10.10 .role=\
     ibgp-rr-client name=R9-2 remote.address=2.9.9.9/32 .as=302 router-id=\

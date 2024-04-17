@@ -1,5 +1,4 @@
-
-# 2024-04-15 15:00:19 by RouterOS 7.14.2
+# 2024-04-17 11:25:42 by RouterOS 7.14.2
 # software id =
 #
 /disk
@@ -13,9 +12,18 @@ set slot7 slot=slot7
 set slot8 slot=slot8
 set slot9 slot=slot9
 set slot10 slot=slot10
+set slot11 slot=slot11
+set slot12 slot=slot12
+set slot13 slot=slot13
+set slot14 slot=slot14
+set slot15 slot=slot15
+set slot16 slot=slot16
+set slot17 slot=slot17
 /interface gre
 add name=GRE_to_R17 remote-address=200.2.3.254
 add name=GRE_to_R18 remote-address=200.2.4.254
+add name=GRE_to_R19 remote-address=200.2.5.254
+add name=GRE_to_R20 remote-address=200.2.6.254
 /interface vlan
 add interface=ether2 name=vlan301 vlan-id=301
 add interface=ether2 name=vlan302 vlan-id=302
@@ -30,6 +38,12 @@ add address-pool=dhcp_pool0 interface=vrrp301 name=dhcp1
 add address-pool=dhcp_pool1 interface=vrrp302 name=dhcp2
 /port
 set 0 name=serial0
+/routing id
+add disabled=no name=loopback select-dynamic-id=only-loopback
+/routing ospf instance
+add disabled=no name=ospf-instance-1 router-id=loopback
+/routing ospf area
+add disabled=no instance=ospf-instance-1 name=ospf-area-1
 /ip address
 add address=10.2.1.1/24 interface=vrrp301 network=10.2.1.0
 add address=10.2.1.2/24 interface=vlan301 network=10.2.1.0
@@ -37,17 +51,23 @@ add address=175.2.175.15/24 interface=GRE_to_R17 network=175.2.175.0
 add address=10.2.6.2/24 interface=vlan302 network=10.2.6.0
 add address=10.2.6.1/24 interface=vrrp302 network=10.2.6.0
 add address=185.2.185.15/24 interface=GRE_to_R18 network=185.2.185.0
+add address=195.2.195.15/24 interface=GRE_to_R19 network=195.2.195.0
+add address=215.2.215.15/24 interface=GRE_to_R20 network=215.2.215.0
+add address=2.15.15.15 interface=lo network=2.15.15.15
 /ip dhcp-client
-add interface=ether1
+add interface=ether1 use-peer-dns=no
 /ip dhcp-server network
-add address=10.2.1.0/24 dns-server=10.2.1.1 gateway=10.2.1.1
-add address=10.2.6.0/24 dns-server=10.2.6.1 gateway=10.2.6.1
-/ip dns
-set allow-remote-requests=yes
-/ip dns static
-add address=200.2.1.1 name=Internet
+add address=10.2.1.0/24 gateway=10.2.1.1
+add address=10.2.6.0/24 gateway=10.2.6.1
 /ip firewall nat
 add action=masquerade chain=srcnat out-interface=ether1
+add action=masquerade chain=srcnat out-interface=GRE_to_R17
+add action=masquerade chain=srcnat out-interface=GRE_to_R18
+add action=masquerade chain=srcnat out-interface=GRE_to_R19
+add action=masquerade chain=srcnat out-interface=GRE_to_R20
+/routing ospf interface-template
+add area=ospf-area-1 disabled=no interfaces=\
+    lo,GRE_to_R17,GRE_to_R18,GRE_to_R19,GRE_to_R20,vrrp301,vrrp302
 /system identity
 set name=R15-2
 /system note
