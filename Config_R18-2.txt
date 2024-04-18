@@ -1,4 +1,4 @@
-# 2024-04-17 11:26:38 by RouterOS 7.14.2
+# 2024-04-18 11:23:24 by RouterOS 7.14.2
 # software id =
 #
 /disk
@@ -16,6 +16,8 @@ set slot11 slot=slot11
 set slot12 slot=slot12
 set slot13 slot=slot13
 set slot14 slot=slot14
+set slot15 slot=slot15
+set slot16 slot=slot16
 /interface gre
 add local-address=200.2.4.254 name=GRE_to_R15 remote-address=200.2.1.254
 add name=GRE_to_R16 remote-address=200.2.2.254
@@ -28,9 +30,8 @@ add authentication=ah interface=vlan201 name=vrrp201 preemption-mode=no \
 add authentication=ah interface=vlan202 name=vrrp202 preemption-mode=no \
     priority=120 version=2
 /ip pool
-add name=dhcp_pool0 ranges=10.2.2.5-10.2.2.254
-add name=dhcp_pool1 ranges=10.2.2.5-10.2.2.254
-add name=dhcp_pool2 ranges=10.2.4.5-10.2.4.254
+add name=dhcp_pool1 ranges=10.2.8.5-10.2.8.254
+add name=dhcp_pool2 ranges=10.2.9.5-10.2.9.254
 /ip dhcp-server
 add address-pool=dhcp_pool1 interface=vrrp201 name=dhcp201
 add address-pool=dhcp_pool2 interface=vrrp202 name=dhcp202
@@ -45,21 +46,19 @@ add disabled=no name=ospf-instance-1 router-id=loopback
 add disabled=no instance=ospf-instance-1 name=ospf-area-1
 /ip address
 add address=2.18.18.18 interface=lo network=2.18.18.18
-add address=10.2.2.3/24 interface=vlan201 network=10.2.2.0
-add address=10.2.2.1/24 interface=vrrp201 network=10.2.2.0
-add address=10.2.4.3/24 interface=vlan202 network=10.2.4.0
-add address=10.2.4.1/24 interface=vrrp202 network=10.2.4.0
+add address=10.2.8.3/24 interface=vlan201 network=10.2.8.0
+add address=10.2.8.1/24 interface=vrrp201 network=10.2.8.0
+add address=10.2.9.3/24 interface=vlan202 network=10.2.9.0
+add address=10.2.9.1/24 interface=vrrp202 network=10.2.9.0
 add address=186.2.186.18/24 interface=GRE_to_R16 network=186.2.186.0
 add address=185.2.185.18/24 interface=GRE_to_R15 network=185.2.185.0
 /ip dhcp-client
 add add-default-route=no interface=ether1 use-peer-dns=no
 /ip dhcp-server network
-add address=10.2.2.0/24 gateway=10.2.2.1
-add address=10.2.4.0/24 gateway=10.2.4.1
+add address=10.2.8.0/24 gateway=10.2.8.1
+add address=10.2.9.0/24 gateway=10.2.9.1
 /ip firewall nat
 add action=masquerade chain=srcnat out-interface=ether1
-add action=masquerade chain=srcnat out-interface=GRE_to_R15
-add action=masquerade chain=srcnat out-interface=GRE_to_R16
 /ip route
 add disabled=no dst-address=200.2.2.0/24 gateway=200.2.4.1 routing-table=main \
     suppress-hw-offload=no

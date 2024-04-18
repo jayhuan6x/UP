@@ -1,4 +1,4 @@
-# 2024-04-17 11:21:13 by RouterOS 7.14.2
+# 2024-04-18 11:19:20 by RouterOS 7.14.2
 # software id =
 #
 /interface ethernet
@@ -37,8 +37,8 @@ add address-families=ip as=302 disabled=no local.address=2.6.6.6 .role=\
     ibgp-rr-client name=R9-2 nexthop-choice=force-self remote.address=\
     2.9.9.9/32 .as=302 router-id=2.6.6.6 routing-table=main
 add address-families=ip as=302 disabled=no local.address=2.6.6.6 .role=ebgp \
-    multihop=yes name=R2-2 remote.address=2.2.2.2/32 .as=102 router-id=\
-    2.6.6.6 routing-table=main
+    multihop=yes name=R2-2 output.default-originate=always remote.address=\
+    2.2.2.2/32 .as=102 router-id=2.6.6.6 routing-table=main
 /routing isis interface-template
 add instance=instance-1 interfaces=ether2,lo levels=l1
 add instance=instance-1 interfaces=ether2,ether3,lo levels=l1

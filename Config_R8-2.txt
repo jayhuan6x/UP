@@ -1,4 +1,4 @@
-# 2024-04-17 11:22:59 by RouterOS 7.14.2
+# 2024-04-18 11:19:59 by RouterOS 7.14.2
 # software id =
 #
 /interface ethernet
@@ -46,4 +46,3 @@ set name=R8-2
 set show-at-login=no
 /tool romon
 set enabled=yes
-

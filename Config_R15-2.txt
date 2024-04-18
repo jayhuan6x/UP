@@ -1,4 +1,4 @@
-# 2024-04-17 11:25:42 by RouterOS 7.14.2
+# 2024-04-18 11:22:19 by RouterOS 7.14.2
 # software id =
 #
 /disk
@@ -19,6 +19,9 @@ set slot14 slot=slot14
 set slot15 slot=slot15
 set slot16 slot=slot16
 set slot17 slot=slot17
+set slot18 slot=slot18
+set slot19 slot=slot19
+set slot20 slot=slot20
 /interface gre
 add name=GRE_to_R17 remote-address=200.2.3.254
 add name=GRE_to_R18 remote-address=200.2.4.254
@@ -31,8 +34,8 @@ add interface=ether2 name=vlan302 vlan-id=302
 add authentication=ah interface=vlan301 name=vrrp301 priority=150 version=2
 add authentication=ah interface=vlan302 name=vrrp302 priority=150 version=2
 /ip pool
-add name=dhcp_pool0 ranges=10.2.1.4-10.2.1.254
-add name=dhcp_pool1 ranges=10.2.6.5-10.2.6.254
+add name=dhcp_pool0 ranges=10.2.4.100-10.2.4.254
+add name=dhcp_pool1 ranges=10.2.5.100-10.2.5.254
 /ip dhcp-server
 add address-pool=dhcp_pool0 interface=vrrp301 name=dhcp1
 add address-pool=dhcp_pool1 interface=vrrp302 name=dhcp2
@@ -45,11 +48,11 @@ add disabled=no name=ospf-instance-1 router-id=loopback
 /routing ospf area
 add disabled=no instance=ospf-instance-1 name=ospf-area-1
 /ip address
-add address=10.2.1.1/24 interface=vrrp301 network=10.2.1.0
-add address=10.2.1.2/24 interface=vlan301 network=10.2.1.0
+add address=10.2.4.1/24 interface=vrrp301 network=10.2.4.0
+add address=10.2.4.10/24 interface=vlan301 network=10.2.4.0
 add address=175.2.175.15/24 interface=GRE_to_R17 network=175.2.175.0
-add address=10.2.6.2/24 interface=vlan302 network=10.2.6.0
-add address=10.2.6.1/24 interface=vrrp302 network=10.2.6.0
+add address=10.2.5.2/24 interface=vlan302 network=10.2.5.0
+add address=10.2.5.1/24 interface=vrrp302 network=10.2.5.0
 add address=185.2.185.15/24 interface=GRE_to_R18 network=185.2.185.0
 add address=195.2.195.15/24 interface=GRE_to_R19 network=195.2.195.0
 add address=215.2.215.15/24 interface=GRE_to_R20 network=215.2.215.0
@@ -57,14 +60,19 @@ add address=2.15.15.15 interface=lo network=2.15.15.15
 /ip dhcp-client
 add interface=ether1 use-peer-dns=no
 /ip dhcp-server network
-add address=10.2.1.0/24 gateway=10.2.1.1
-add address=10.2.6.0/24 gateway=10.2.6.1
+add address=10.2.4.0/24 gateway=10.2.4.1
+add address=10.2.5.0/24 gateway=10.2.5.1
+/ip firewall address-list
+add address=10.2.4.0/24 list=vlan301
+add address=10.2.5.0/24 list=vlan302
+/ip firewall filter
+add action=accept chain=forward dst-address=10.2.4.253
+add action=drop chain=forward connection-state=new dst-address-list=vlan301 \
+    src-address-list=vlan302
 /ip firewall nat
 add action=masquerade chain=srcnat out-interface=ether1
-add action=masquerade chain=srcnat out-interface=GRE_to_R17
-add action=masquerade chain=srcnat out-interface=GRE_to_R18
-add action=masquerade chain=srcnat out-interface=GRE_to_R19
-add action=masquerade chain=srcnat out-interface=GRE_to_R20
+add action=masquerade chain=srcnat dst-address-list=vlan302 src-address-list=\
+    vlan301
 /routing ospf interface-template
 add area=ospf-area-1 disabled=no interfaces=\
     lo,GRE_to_R17,GRE_to_R18,GRE_to_R19,GRE_to_R20,vrrp301,vrrp302

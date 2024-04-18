@@ -1,4 +1,4 @@
-# 2024-04-17 11:25:05 by RouterOS 7.14.2
+# 2024-04-18 11:21:34 by RouterOS 7.14.2
 # software id =
 #
 /interface ethernet
@@ -27,6 +27,57 @@ add address=20.2.2.2/24 interface=ether2 network=20.2.2.0
 add address=2.13.13.13 interface=lo network=2.13.13.13
 /ip dhcp-client
 add interface=*1
+/ip route
+add disabled=no dst-address=0.0.0.0/0 gateway=20.2.2.1 routing-table=main \
+    suppress-hw-offload=no
+/routing bgp connection
+add address-families=ip as=202 disabled=no local.address=2.13.13.13 .role=\
+    ibgp name=R3-2 remote.address=2.3.3.3/32 .as=202 router-id=2.13.13.13
+add address-families=ip as=202 disabled=no local.address=2.13.13.13 .role=\
+    ibgp name=R4-2 remote.address=2.4.4.4/32 .as=202 router-id=2.13.13.13
+add address-families=ip as=202 disabled=no local.address=2.13.13.13 .role=\
+    ibgp name=R14-2 remote.address=2.14.14.14/32 .as=202 router-id=2.13.13.13
+/routing isis interface-template
+add instance=instance-1 interfaces=ether2,lo levels=l1
+/system identity
+set name=R13-2
+/system note
+set show-at-login=no
+/tool romon
+set enabled=yes
+[admin@R13-2] > export compact
+# 2024-04-18 11:21:37 by RouterOS 7.14.2
+# software id =
+#
+/interface ethernet
+set [ find default-name=ether1 ] name=ether2
+set [ find default-name=ether2 ] name=ether3
+set [ find default-name=ether3 ] name=ether4
+set [ find default-name=ether4 ] name=ether5
+set [ find default-name=ether5 ] name=ether6
+set [ find default-name=ether6 ] name=ether7
+set [ find default-name=ether7 ] name=ether8
+set [ find default-name=ether8 ] name=ether9
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/port
+set 0 name=serial0
+/routing id
+add name=loopback select-dynamic-id=only-loopback select-from-vrf=main
+/routing isis instance
+add areas=02.0202 name=instance-1 system-id=0000.0000.0013
+/ip firewall connection tracking
+set udp-timeout=10s
+/ipv6 settings
+set max-neighbor-entries=16384
+/ip address
+add address=20.2.2.2/24 interface=ether2 network=20.2.2.0
+add address=2.13.13.13 interface=lo network=2.13.13.13
+/ip dhcp-client
+add interface=*1
+/ip route
+add disabled=no dst-address=0.0.0.0/0 gateway=20.2.2.1 routing-table=main \
+    suppress-hw-offload=no
 /routing bgp connection
 add address-families=ip as=202 disabled=no local.address=2.13.13.13 .role=\
     ibgp name=R3-2 remote.address=2.3.3.3/32 .as=202 router-id=2.13.13.13

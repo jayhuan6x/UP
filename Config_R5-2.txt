@@ -1,4 +1,4 @@
-# 2024-04-17 11:20:48 by RouterOS 7.14.2
+# 2024-04-18 11:19:02 by RouterOS 7.14.2
 # software id =
 #
 /interface ethernet
@@ -41,8 +41,8 @@ add address-families=ip as=302 disabled=no local.address=2.5.5.5 .role=\
     ibgp-rr-client name=R9-2 nexthop-choice=force-self remote.address=\
     2.9.9.9/32 .as=302 router-id=2.5.5.5 routing-table=main
 add address-families=ip as=302 disabled=no local.address=2.5.5.5 .role=ebgp \
-    multihop=yes name=R1-2 remote.address=2.1.1.1/32 .as=102 router-id=\
-    2.5.5.5 routing-table=main
+    multihop=yes name=R1-2 output.default-originate=always remote.address=\
+    2.1.1.1/32 .as=102 router-id=2.5.5.5 routing-table=main
 /routing isis interface-template
 add instance=instance-1 interfaces=ether4,lo levels=l1
 /system identity
@@ -53,7 +53,7 @@ set show-at-login=no
 add disabled=yes down-script="/ip/route/disable [find comment=\"15.0\"]" \
     host=100.2.15.1 http-codes="" name=100.2.15.1 test-script="" type=simple \
     up-script="/ip/route/enable [find comment=\"15.0\"]"
-# Warning: probe waiting startup-delay=5m; 1m55s remaining
+# Warning: probe waiting startup-delay=5m; 49s remaining
 add disabled=no down-script="/ip/route/disable [find comment=\"1.0\"]\r\
     \n/ip/route/enable [find comment=\"15.0\"]" host=100.2.1.1 http-codes="" \
     name=100.2.1.1 src-address=100.2.1.2 test-script="" type=icmp up-script="/\
