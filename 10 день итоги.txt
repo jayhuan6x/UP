@@ -1,0 +1,20 @@
+НАстраивал DNS сервер в главном офисе и исправлял много других ошибок, настраивал дефолтные маршруты 
+на коммутаторах на роутеры и вообще я молодец
+;
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     modns.Bondarchuk.up. root.modns.Bondarchuk.up. (
+                              2         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      modns.Bondarchuk.up.
+@       IN      A       127.0.0.1
+@       IN      AAAA    ::1
+modns   IN      A       10.2.4.150
+moclient        IN      A       10.2.5.253
+mofile  IN      A       10.2.4.252
+moadmin IN      A       10.2.4.251
